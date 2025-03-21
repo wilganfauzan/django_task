@@ -3,6 +3,7 @@ from django.shortcuts import redirect, render
 from django.views.generic import DetailView, ListView, View
 
 from .models import Note
+from .tasks import task_do_something
 
 
 class NoteListView(ListView):
@@ -25,5 +26,7 @@ class NoteCreateView(View):
         title = request.POST.get("title")
         content = request.POST.get("content")
 
-        Note.objects.create(title=title, content=content)
+        task_do_something() ##background --> insert to queue
+
+        Note.objects.create(title=title, content=content, user=request.user)
         return redirect("index")
